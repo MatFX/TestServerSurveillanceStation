@@ -7,7 +7,9 @@ import java.util.Base64.Decoder;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 /**
@@ -15,6 +17,7 @@ import javax.ws.rs.core.Response.Status;
  * @author m.goerlich
  *
  */
+
 public class AuthFilter implements ContainerRequestFilter
 {
 	//hardcoded user pwd
@@ -42,6 +45,7 @@ public class AuthFilter implements ContainerRequestFilter
         	}
         	else
         	{
+        		System.out.println("test 1");
         		//no authorization
                 throw new WebApplicationException(Status.UNAUTHORIZED);
         	}
@@ -49,13 +53,23 @@ public class AuthFilter implements ContainerRequestFilter
         }
         //no authorization
         else
-        	 throw new WebApplicationException(Status.UNAUTHORIZED);
+        {
+        	unauthenticated("");
+        //	System.out.println("test 2");
+        //	throw new WebApplicationException(Status.UNAUTHORIZED);
+        }
         
         
 		
 		
 		
 	}
+	
+	private static void unauthenticated (String user) {
+	     throw new WebApplicationException(Response.status(Status.UNAUTHORIZED)
+	         .header(HttpHeaders.WWW_AUTHENTICATE, "Basic realm=\"Server\"")
+	         .build());
+	 }
 	
 	private static String[] decode(final String encodedString) 
 	{
